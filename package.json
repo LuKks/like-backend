@@ -1,7 +1,7 @@
 {
   "name": "like-backend",
   "version": "0.1.1",
-  "description": "Create a server with graceful shutdown and tests easily",
+  "description": "Create HTTP servers with graceful shutdown and tests easily",
   "main": "index.js",
   "scripts": {
     "test": "standard && brittle test/test.js"

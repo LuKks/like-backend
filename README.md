@@ -1,6 +1,6 @@
 # like-backend
 
-Create a server with graceful shutdown and tests easily
+Create HTTP servers with graceful shutdown and tests easily
 
 ```
 npm i like-backend
