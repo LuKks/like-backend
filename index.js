@@ -12,8 +12,8 @@ module.exports = class Backend extends ReadyResource {
     this.server = null
 
     this._host = opts.host || '127.0.0.1'
-    this._port = typeof opts.port === 'number' ? opts.port : 0
-    this._logs = opts.logs === true
+    this._port = isProcess && typeof opts.port === 'number' ? opts.port : 0
+    this._logs = isProcess && opts.logs === true
 
     this._gracefulClose = null
   }
@@ -21,7 +21,7 @@ module.exports = class Backend extends ReadyResource {
   async _open () {
     const server = this.app.listen(this._port, this._host)
 
-    if (isProcess && this._logs) {
+    if (this._logs) {
       server.on('listening', () => console.log('Server listening on port ' + server.address().port))
       server.on('close', () => console.log('Server closed'))
     }
