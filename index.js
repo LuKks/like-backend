@@ -40,18 +40,23 @@ module.exports = class Backend extends ReadyResource {
       })
 
       async function main () {
-        const backend = await setup()
-        await backend.ready()
+        const backend = await create()
         goodbye(() => backend.close(), -Infinity)
       }
     } else {
       // Imported in tests
       return async function (t) {
-        const backend = await setup()
-        await backend.ready()
+        const backend = await create()
         t.teardown(() => backend.close(), { order: Infinity })
         return backend
       }
+    }
+
+    async function create () {
+      const server = await setup()
+      const backend = server instanceof Backend ? server : new Backend({ server })
+      await backend.ready()
+      return backend
     }
   }
 }
