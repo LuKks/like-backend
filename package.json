@@ -1,6 +1,6 @@
 {
   "name": "like-backend",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Create a server with graceful shutdown and tests easily",
   "main": "index.js",
   "scripts": {
