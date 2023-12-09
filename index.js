@@ -2,7 +2,7 @@ const graceful = require('graceful-http')
 const goodbye = require('graceful-goodbye')
 const ReadyResource = require('ready-resource')
 
-const isProcess = require.main === module
+const isProcess = require.main === module.parent
 
 module.exports = class Backend extends ReadyResource {
   constructor (opts = {}) {
