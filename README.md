@@ -27,9 +27,7 @@ function main () {
     res.json('Hello world!')
   })
 
-  const server = app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
-
-  return server // Or return an instance: new Backend({ server })
+  return app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
 }
 ```
 
@@ -75,7 +73,7 @@ Static property that indicates if it's running for tests.
 
 Static method to handle the start up of the server.
 
-`main` must be a function that returns a new Backend instance or an HTTP server.
+`main` must be a function that returns an HTTP server.
 
 ## License
 

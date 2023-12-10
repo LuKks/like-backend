@@ -10,7 +10,5 @@ function main () {
     res.json('Hello world!')
   })
 
-  const server = app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
-
-  return server
+  return app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
 }
