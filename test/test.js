@@ -11,18 +11,18 @@ test('basic', async function (t) {
 })
 
 test('basic', async function (t) {
-  const backend = await launch(t)
+  const request = await launch(t)
 
-  const response = await fetch('http://' + backend.host + ':' + backend.port + '/api/example')
+  const response = await request('/api/example', { responseType: false })
   const data = await response.json()
 
   t.is(data, 'Hello world!')
 })
 
 test('basic', async function (t) {
-  const request = await launch(t)
+  const backend = await launch(t)
 
-  const response = await request('/api/example', { responseType: false })
+  const response = await fetch('http://' + backend.host + ':' + backend.port + '/api/example')
   const data = await response.json()
 
   t.is(data, 'Hello world!')
