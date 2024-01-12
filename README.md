@@ -27,7 +27,14 @@ function main () {
     res.json('Hello world!')
   })
 
-  return app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
+  const server = app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
+
+  return new Backend({
+    server,
+    goodbye: async function () {
+      // Close resources here
+    }
+  })
 }
 ```
 
@@ -64,12 +71,20 @@ test('basic', async function (t) {
 
 ## API
 
-#### `const backend = new Backend({ server })`
+#### `const backend = new Backend(options)`
 
 Creates a Backend instance based on a HTTP server.
 
 Avoid async operations between `server.listen` and the Backend creation.\
 So there is no new connections until [graceful-http](https://github.com/LuKks/graceful-http) is hooked up.
+
+Available `options`:
+```js
+{
+  server,
+  goodbye // Function that is called to teardown the backend
+}
+```
 
 #### `backend.host`
 
@@ -87,7 +102,7 @@ Static property that indicates if it's running for tests.
 
 Static method to handle the start up of the server.
 
-`main` must be a function that returns an HTTP server.
+`main` must be a function that returns an HTTP server or a Backend instance.
 
 ## License
 

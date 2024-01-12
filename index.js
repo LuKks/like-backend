@@ -12,6 +12,7 @@ module.exports = class Backend extends ReadyResource {
     this.server = opts.server
 
     this._gracefulClose = graceful(this.server)
+    this._onclose = opts.goodbye || noop
   }
 
   async _open () {
@@ -19,7 +20,8 @@ module.exports = class Backend extends ReadyResource {
   }
 
   async _close () {
-    if (this._gracefulClose) await this._gracefulClose()
+    await this._gracefulClose()
+    await this._onclose()
   }
 
   get host () {
@@ -42,7 +44,7 @@ module.exports = class Backend extends ReadyResource {
 
       async function main () {
         const server = await setup()
-        const backend = new Backend({ server })
+        const backend = server instanceof Backend ? server : new Backend({ server })
         goodbye(() => backend.close(), -Infinity)
         await backend.ready()
       }
@@ -50,7 +52,7 @@ module.exports = class Backend extends ReadyResource {
       // Imported in tests
       return async function (t) {
         const server = await setup()
-        const backend = new Backend({ server })
+        const backend = server instanceof Backend ? server : new Backend({ server })
         t.teardown(() => backend.close(), { order: Infinity })
         await backend.ready()
 
@@ -95,3 +97,5 @@ function customFetch (backend, endpoint, opts = {}) {
     responseType: ('responseType' in opts) ? opts.responseType : 'json'
   })
 }
+
+function noop () {}
