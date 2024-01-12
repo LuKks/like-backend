@@ -27,7 +27,14 @@ function main () {
     res.json('Hello world!')
   })
 
-  return app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
+  const server = app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
+
+  return new Backend({
+    server,
+    goodbye: async function () {
+      // Close resources here
+    }
+  })
 }
 ```
 
@@ -75,7 +82,7 @@ Available `options`:
 ```js
 {
   server,
-  goodbye
+  goodbye // Function that is called to teardown the backend
 }
 ```
 
