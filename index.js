@@ -2,8 +2,10 @@ const graceful = require('graceful-http')
 const goodbye = require('graceful-goodbye')
 const fetch = require('like-fetch')
 const ReadyResource = require('ready-resource')
+const safetyCatch = require('safety-catch')
 
 const isProcess = require.main === module.parent
+const handlers = []
 
 module.exports = class Backend extends ReadyResource {
   constructor (opts = {}) {
@@ -12,7 +14,9 @@ module.exports = class Backend extends ReadyResource {
     this.server = opts.server
 
     this._gracefulClose = graceful(this.server)
-    this._onclose = opts.goodbye || noop
+    this._onclose = handlers.slice()
+
+    if (opts.goodbye) this._onclose.push(opts.goodbye)
   }
 
   async _open () {
@@ -21,7 +25,15 @@ module.exports = class Backend extends ReadyResource {
 
   async _close () {
     await this._gracefulClose()
-    await this._onclose()
+
+    for (const onclose of this._onclose) {
+      try {
+        await onclose()
+      } catch (err) {
+        if (isProcess) safetyCatch(err)
+        else throw err
+      }
+    }
   }
 
   get host () {
@@ -66,6 +78,10 @@ module.exports = class Backend extends ReadyResource {
       }
     }
   }
+
+  static goodbye (onclose) {
+    handlers.push(onclose)
+  }
 }
 
 function waitForServer (server) {
@@ -97,5 +113,3 @@ function customFetch (backend, endpoint, opts = {}) {
     responseType: ('responseType' in opts) ? opts.responseType : 'json'
   })
 }
-
-function noop () {}

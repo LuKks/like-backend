@@ -104,6 +104,10 @@ Static method to handle the start up of the server.
 
 `main` must be a function that returns an HTTP server or a Backend instance.
 
+#### `Backend.goodbye(onclose)`
+
+Static method to add teardown handlers from outside of launch.
+
 ## License
 
 MIT
