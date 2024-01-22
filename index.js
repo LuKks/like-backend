@@ -108,8 +108,9 @@ function getHost (address) {
 
 function customFetch (backend, endpoint, opts = {}) {
   return fetch('http://' + backend.host + ':' + backend.port + endpoint, {
-    ...opts,
+    validateStatus: 'ok',
     requestType: ('requestType' in opts) ? opts.requestType : 'json',
-    responseType: ('responseType' in opts) ? opts.responseType : 'json'
+    responseType: ('responseType' in opts) ? opts.responseType : 'json',
+    ...opts
   })
 }
