@@ -27,3 +27,29 @@ test('basic', async function (t) {
 
   t.is(data, 'Hello world!')
 })
+
+test('bad request', async function (t) {
+  const request = await launch(t)
+
+  try {
+    await request('/api/bad-request')
+  } catch (err) {
+    if (!err.response) throw err
+    t.is(err.response.status, 400)
+    t.is(err.code, 'ERR_BAD_REQUEST')
+    t.alike(err.body, { error: 'SOMETHING' })
+  }
+})
+
+test('bad response', async function (t) {
+  const request = await launch(t)
+
+  try {
+    await request('/api/bad-response')
+  } catch (err) {
+    if (!err.response) throw err
+    t.is(err.response.status, 500)
+    t.is(err.code, 'ERR_BAD_RESPONSE')
+    t.alike(err.body, { error: 'SOMETHING' })
+  }
+})
