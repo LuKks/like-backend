@@ -107,9 +107,11 @@ Static method to handle the start up of the server.
 
 Static method to add teardown handlers from outside of launch.
 
-#### `const backend = await launch(options)`
+#### `const request = await launch(options)`
 
 Starts the app for testing.
+
+The returned `request` is a `like-fetch` instance, bound with the backend URL prefixed.
 
 `options` available:
 ```
