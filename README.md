@@ -27,6 +27,10 @@ function main () {
     res.json('Hello world!')
   })
 
+  app.post('/api/users', function (req, res) {
+    res.status(409).json({ error: 'EMAIL_ALREADY_REGISTERED' })
+  })
+
   const server = app.listen(Backend.testing ? 0 : 1337, '127.0.0.1')
 
   return new Backend({
@@ -42,30 +46,25 @@ function main () {
 
 ```js
 const test = require('brittle')
-const fetch = require('like-fetch')
 const launch = require('./app.js')
 
 test('basic', async function (t) {
-  const request = await launch(t) // Or pass any teardown function: launch({ teardown })
+  const request = await launch(t)
 
   const data = await request('/api/example')
   t.is(data, 'Hello world!')
 })
 
-test('basic', async function (t) {
+test('basic error', async function (t) {
   const request = await launch(t)
 
-  const response = await request('/api/example', { responseType: false })
-  const data = await response.json()
-  t.is(data, 'Hello world!')
-})
-
-test('basic', async function (t) {
-  const backend = await launch(t)
-
-  const response = await fetch('http://' + backend.host + ':' + backend.port + '/api/example')
-  const data = await response.json()
-  t.is(data, 'Hello world!')
+  try {
+    await request('/api/users', { method: 'POST' })
+  } catch (err) {
+    if (!err.response) throw err
+    t.is(err.response.status, 409)
+    t.alike(err.body, { error: 'EMAIL_ALREADY_REGISTERED' })
+  }
 })
 ```
 
@@ -107,6 +106,46 @@ Static method to handle the start up of the server.
 #### `Backend.goodbye(onclose)`
 
 Static method to add teardown handlers from outside of launch.
+
+#### `const request = await launch(options)`
+
+Starts the app for testing.
+
+The returned `request` is a `like-fetch` instance, bound with the backend URL prefixed.
+
+`options` available:
+```
+{
+  teardown
+}
+```
+
+## More examples
+
+```js
+test('custom teardown', async function (t) {
+  const request = await launch({ teardown: t.teardown })
+  // ...
+})
+
+test('disable response type', async function (t) {
+  const request = await launch(t)
+
+  const response = await request('/api/example', { responseType: false })
+  const data = await response.json()
+
+  t.is(data, 'Hello world!')
+})
+
+test('manual request', async function (t) {
+  const backend = await launch(t)
+
+  const response = await fetch('http://' + backend.host + ':' + backend.port + '/api/example')
+  const data = await response.json()
+
+  t.is(data, 'Hello world!')
+})
+```
 
 ## License
 
