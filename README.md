@@ -80,7 +80,10 @@ So there is no new connections until [graceful-http](https://github.com/LuKks/gr
 Available `options`:
 ```js
 {
-  server,
+  server, // Server that is already listening or set `app` to true if you want `server` to auto listen using options
+  app, // HTTP request handler
+  port, // Defaults to env BACKEND_PORT or 1337 (tests do randomize ports)
+  host, // Defaults to env BACKEND_HOST or 127.0.0.1
   goodbye // Function that is called to teardown the backend
 }
 ```
