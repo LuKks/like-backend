@@ -1,3 +1,4 @@
+const http = require('http')
 const graceful = require('graceful-http')
 const goodbye = require('graceful-goodbye')
 const fetch = require('like-fetch')
@@ -11,7 +12,14 @@ module.exports = class Backend extends ReadyResource {
   constructor (opts = {}) {
     super()
 
-    this.server = opts.server
+    this.server = opts.server || http.createServer(opts.app)
+
+    if (opts.app) {
+      const port = opts.port || process.env.BACKEND_PORT || 1337
+      const host = opts.host || process.env.BACKEND_HOST || '127.0.0.1'
+
+      this.server.listen(isProcess ? port : 0, host)
+    }
 
     this._gracefulClose = graceful(this.server)
     this._onclose = handlers.slice()
