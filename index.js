@@ -5,7 +5,7 @@ const fetch = require('like-fetch')
 const ReadyResource = require('ready-resource')
 const safetyCatch = require('safety-catch')
 
-const isProcess = require.main === module.parent
+let isProcess = require.main === module.parent
 const handlers = []
 
 module.exports = class Backend extends ReadyResource {
@@ -89,6 +89,12 @@ module.exports = class Backend extends ReadyResource {
 
   static goodbye (onclose) {
     handlers.push(onclose)
+  }
+
+  // Libs that imports like-backend should reset the context
+  static setContext (req, mod) {
+    isProcess = req.main === mod.parent
+    Backend.testing = !isProcess
   }
 }
 
